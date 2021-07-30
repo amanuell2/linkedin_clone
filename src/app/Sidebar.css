@@ -4,6 +4,8 @@
   flex: 0.2;
   border-radius: 10px;
   text-align: center;
+  margin-left: 20px;
+  margin-top: 20px;
 }
 .sidebar__avatar {
   margin-bottom: 10px;
