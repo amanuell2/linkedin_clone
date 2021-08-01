@@ -7,11 +7,14 @@ import ImageIcon from "@material-ui/icons/Image";
 import SubscriptionsIcon from "@material-ui/icons/Subscriptions";
 import EventIcon from "@material-ui/icons/Event";
 import CalendarViewDayIcon from "@material-ui/icons/CalendarViewDay";
-
+import FilipMove from "react-flip-move";
+import { useSelector } from "react-redux";
+import { selectUser } from "../features/userSlice";
 //firebase
 import { db } from "./firebase";
 import firebase from "firebase";
-function Feed() {
+const Feed = () => {
+  const user = useSelector(selectUser);
   // set states
   const [input, setInput] = useState("");
   const [posts, setPosts] = useState([]);
@@ -27,7 +30,6 @@ function Feed() {
             data: doc.data(),
           }))
         );
-        setInput("");
       });
   }, []);
 
@@ -35,12 +37,13 @@ function Feed() {
   const sendPost = (e) => {
     e.preventDefault();
     db.collection("posts").add({
-      name: "Amanuel",
-      description: "this is a test",
+      name: user.displayName,
+      description: user.email,
       message: input,
-      photoUrl: "",
+      photoUrl: user.photoURL || "",
       timeStamp: firebase.firestore.FieldValue.serverTimestamp(),
     });
+    setInput("");
   };
 
   return (
@@ -50,6 +53,7 @@ function Feed() {
           <CreateIcon />
           <form>
             <input
+              id="input"
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
@@ -83,17 +87,19 @@ function Feed() {
         </div>
       </div>
       {/* posts */}
-      {posts.map(({ id, data: { name, description, message, photoUrl } }) => (
-        <Post
-          key={id}
-          name={name}
-          description={description}
-          message={message}
-          photoUrl={photoUrl}
-        />
-      ))}
+      <FilipMove>
+        {posts.map(({ id, data: { name, description, message, photoUrl } }) => (
+          <Post
+            key={id}
+            name={name}
+            description={description}
+            message={message}
+            photoUrl={photoUrl}
+          />
+        ))}
+      </FilipMove>
     </div>
   );
-}
+};
 
 export default Feed;
